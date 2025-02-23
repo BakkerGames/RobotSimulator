@@ -1,4 +1,6 @@
-﻿namespace RobotSimulator
+﻿using Raylib_cs;
+
+namespace RobotSimulator
 {
     internal class Robot(int x, int y, int width, int height, int direction, int speed, Raylib_cs.Color color)
     {
@@ -12,5 +14,13 @@
         public int Speed { get; set; } = speed;
 
         public Raylib_cs.Color Color { get; set; } = color;
+
+        public Rectangle Outline
+        {
+            get
+            {
+                return new Rectangle(X, Y, Width, Height);
+            }
+        }
     }
 }
