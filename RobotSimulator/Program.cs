@@ -4,44 +4,42 @@ namespace RobotSimulator
 {
     internal class Program
     {
+        public const int width = 1280;
+        public const int height = 800;
+        public const int rWidth = 30;
+        public const int rHeight = 30;
+
         public static List<Rectangle> Walls = [];
         public static List<Robot> Robots = [];
 
         static void Main(string[] args)
         {
-            int width = 1280;
-            int height = 800;
-            int rWidth = 30;
-            int rHeight = 30;
             Raylib.InitWindow(width, height, "RobotSimulator");
             Raylib.SetTargetFPS(30);
 
-            Robots.Add(new Robot(100, 100, rWidth, rHeight, 0, 0, Color.Blue));
-            Robots.Add(new Robot(100, (height - rHeight) / 2, rWidth, rHeight, 0, 0, Color.Blue));
-            Robots.Add(new Robot(100, height - 100 - rHeight, rWidth, rHeight, 0, 0, Color.Blue));
-            Robots.Add(new Robot(width - 100 - rWidth, 100, rWidth, rHeight, 0, 0, Color.Red));
-            Robots.Add(new Robot(width - 100 - rWidth, (height - rHeight) / 2, rWidth, rHeight, 0, 0, Color.Red));
-            Robots.Add(new Robot(width - 100 - rWidth, height - 100 - rHeight, rWidth, rHeight, 0, 0, Color.Red));
-
+            // add all walls
             Walls.Add(new Rectangle(0, 0, width, 10));
             Walls.Add(new Rectangle(0, height - 10, width, 10));
             Walls.Add(new Rectangle(0, 0, 10, height));
             Walls.Add(new Rectangle(width - 10, 0, width, height));
+
+            // add all robots
+            Robots.Add(new Robot(1, 100, 100, rWidth, rHeight, 0, 0, Color.Blue));
+            Robots.Add(new Robot(2, 100, (height - rHeight) / 2, rWidth, rHeight, 0, 0, Color.Blue));
+            Robots.Add(new Robot(3, 100, height - 100 - rHeight, rWidth, rHeight, 0, 0, Color.Blue));
+            Robots.Add(new Robot(4, width - 100 - rWidth, 100, rWidth, rHeight, 0, 0, Color.Red));
+            Robots.Add(new Robot(5, width - 100 - rWidth, (height - rHeight) / 2, rWidth, rHeight, 0, 0, Color.Red));
+            Robots.Add(new Robot(6, width - 100 - rWidth, height - 100 - rHeight, rWidth, rHeight, 0, 0, Color.Red));
 
             while (true)
             {
                 Raylib.BeginDrawing();
 
                 Raylib.ClearBackground(Color.Black);
+
                 foreach (Rectangle wall in Walls)
                 {
                     Raylib.DrawRectangle((int)wall.X, (int)wall.Y, (int)wall.Width, (int)wall.Height, Color.Yellow);
-                }
-
-                // Robots
-                foreach (Robot r in Robots)
-                {
-                    Raylib.DrawRectangle(r.X, r.Y, r.Width, r.Height, r.Color);
                 }
 
                 Raylib.EndDrawing();
@@ -51,6 +49,12 @@ namespace RobotSimulator
                 GetInput(Robots[0]);
 
                 MoveRobot(Robots[0]);
+
+                // Draw Robots
+                foreach (Robot r in Robots)
+                {
+                    Raylib.DrawRectangle(r.X, r.Y, r.Width, r.Height, r.Color);
+                }
             }
 
             Raylib.CloseWindow();
@@ -95,14 +99,24 @@ namespace RobotSimulator
                 }
             }
             // check collisions
-            // TODO fix collision to check both direction and proper edge of wall
-            //foreach (Rectangle wall in Walls)
-            //{
-            //    if (Raylib.CheckCollisionRecs(r.Outline, wall))
-            //    {
-            //        return;
-            //    }
-            //}
+            foreach (Rectangle wall in Walls)
+            {
+                if (Raylib.CheckCollisionRecs(new Rectangle(newX, newY, r.Width, r.Height), wall))
+                {
+                    return;
+                }
+            }
+            foreach (Robot robot in Robots)
+            {
+                if (robot.ID == r.ID)
+                {
+                    continue;
+                }
+                if (Raylib.CheckCollisionRecs(new Rectangle(newX, newY, r.Width, r.Height), robot.BoundingRectangle))
+                {
+                    return;
+                }
+            }
             // actually move the robot
             r.X = newX;
             r.Y = newY;
@@ -146,7 +160,7 @@ namespace RobotSimulator
                 NewDirs.Add(180);
             }
             if (Raylib.IsKeyDown(KeyboardKey.Kp1)
-    || Raylib.IsKeyDown(KeyboardKey.Z))
+                || Raylib.IsKeyDown(KeyboardKey.Z))
             {
                 NewDirs.Add(225);
             }
@@ -165,19 +179,39 @@ namespace RobotSimulator
             {
                 NewDirs.Add(45);
             }
-
-            if (NewDirs.Count >= 1)
+            // save new direction
+            if (NewDirs.Count == 1)
             {
                 r.Direction = NewDirs[0];
                 r.Speed = 5;
             }
-            // TODO fix diagonals
-            //else if (NewDirs.Count == 2)
-            //{
-
-            //    r.Direction = NewDirs[0] 
-            //    r.Speed = 5;
-            //}
+            else if (NewDirs.Count == 2)
+            {
+                if (NewDirs[0] > NewDirs[1])
+                {
+                    // swap so [0] is lower
+                    (NewDirs[1], NewDirs[0]) = (NewDirs[0], NewDirs[1]);
+                }
+                switch (NewDirs[0])
+                {
+                    case 0:
+                        if (NewDirs[1] == 90)
+                        {
+                            r.Direction = 45;
+                        }
+                        else if (NewDirs[1] == 270)
+                        {
+                            r.Direction = 315;
+                        }
+                        break;
+                    case 90:
+                    case 180:
+                    case 270:
+                        r.Direction = (NewDirs[1] + NewDirs[0]) / 2;
+                        break;
+                }
+                r.Speed = 5;
+            }
         }
     }
 }
