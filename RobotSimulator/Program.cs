@@ -16,6 +16,7 @@ namespace RobotSimulator
         {
             Raylib.InitWindow(width, height, "RobotSimulator");
             Raylib.SetTargetFPS(30);
+            Raylib.SetExitKey(KeyboardKey.Escape);
 
             // add all walls
             Walls.Add(new Rectangle(0, 0, width, 10));
@@ -31,8 +32,11 @@ namespace RobotSimulator
             Robots.Add(new Robot(5, width - 100 - rWidth, (height - rHeight) / 2, rWidth, rHeight, 0, 0, Color.Red));
             Robots.Add(new Robot(6, width - 100 - rWidth, height - 100 - rHeight, rWidth, rHeight, 0, 0, Color.Red));
 
+            // game loop
             while (true)
             {
+                if (Raylib.WindowShouldClose() || Raylib.IsKeyPressed(KeyboardKey.Escape)) break;
+
                 Raylib.BeginDrawing();
 
                 Raylib.ClearBackground(Color.Black);
@@ -41,10 +45,6 @@ namespace RobotSimulator
                 {
                     Raylib.DrawRectangle((int)wall.X, (int)wall.Y, (int)wall.Width, (int)wall.Height, Color.Yellow);
                 }
-
-                Raylib.EndDrawing();
-
-                if (Raylib.IsKeyPressed(KeyboardKey.Escape)) break;
 
                 GetInput(Robots[0]);
 
@@ -55,6 +55,8 @@ namespace RobotSimulator
                 {
                     Raylib.DrawRectangle(r.X, r.Y, r.Width, r.Height, r.Color);
                 }
+
+                Raylib.EndDrawing();
             }
 
             Raylib.CloseWindow();
