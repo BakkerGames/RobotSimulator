@@ -46,9 +46,13 @@ namespace RobotSimulator
                     Raylib.DrawRectangle((int)wall.X, (int)wall.Y, (int)wall.Width, (int)wall.Height, Color.Yellow);
                 }
 
-                GetInput(Robots[0]);
+                GetInputRobot0();
+                GetInputRobot1();
+                GetInputRobot2();
 
                 MoveRobot(Robots[0]);
+                MoveRobot(Robots[1]);
+                MoveRobot(Robots[2]);
 
                 // Draw Robots
                 foreach (Robot r in Robots)
@@ -124,70 +128,122 @@ namespace RobotSimulator
             r.Y = newY;
         }
 
-        private static void GetInput(Robot r)
+        private static void GetInputRobot0()
         {
+            Robot r = Robots[0];
             r.Speed = 0;
             List<int> NewDirs = [];
-            if (Raylib.IsKeyDown(KeyboardKey.Left)
-                || Raylib.IsKeyDown(KeyboardKey.Kp4)
-                || Raylib.IsKeyDown(KeyboardKey.A)
-                //|| (gamepad0 && Raylib.IsGamepadButtonDown(0, GamepadButton.LeftFaceLeft))
-                )
-            {
-                NewDirs.Add(270);
-            }
-            if (Raylib.IsKeyDown(KeyboardKey.Right)
-                || Raylib.IsKeyDown(KeyboardKey.Kp6)
-                || Raylib.IsKeyDown(KeyboardKey.D)
-                //|| (gamepad0 && Raylib.IsGamepadButtonDown(0, GamepadButton.LeftFaceRight))
-                )
-            {
-                NewDirs.Add(90);
-            }
-            if (Raylib.IsKeyDown(KeyboardKey.Up)
-                || Raylib.IsKeyDown(KeyboardKey.Kp8)
-                || Raylib.IsKeyDown(KeyboardKey.W)
-                //|| (gamepad0 && Raylib.IsGamepadButtonDown(0, GamepadButton.LeftFaceUp))
-                )
+            if (Raylib.IsKeyDown(KeyboardKey.W))
             {
                 NewDirs.Add(0);
             }
-            if (Raylib.IsKeyDown(KeyboardKey.Down)
-                || Raylib.IsKeyDown(KeyboardKey.Kp2)
-                || Raylib.IsKeyDown(KeyboardKey.S)
-                || Raylib.IsKeyDown(KeyboardKey.X)
-                //|| (gamepad0 && Raylib.IsGamepadButtonDown(0, GamepadButton.LeftFaceDown))
-                )
-            {
-                NewDirs.Add(180);
-            }
-            if (Raylib.IsKeyDown(KeyboardKey.Kp1)
-                || Raylib.IsKeyDown(KeyboardKey.Z))
-            {
-                NewDirs.Add(225);
-            }
-            if (Raylib.IsKeyDown(KeyboardKey.Kp3)
-                || Raylib.IsKeyDown(KeyboardKey.C))
-            {
-                NewDirs.Add(135);
-            }
-            if (Raylib.IsKeyDown(KeyboardKey.Kp7)
-                || Raylib.IsKeyDown(KeyboardKey.Q))
-            {
-                NewDirs.Add(315);
-            }
-            if (Raylib.IsKeyDown(KeyboardKey.Kp9)
-                || Raylib.IsKeyDown(KeyboardKey.E))
+            if (Raylib.IsKeyDown(KeyboardKey.E))
             {
                 NewDirs.Add(45);
             }
+            if (Raylib.IsKeyDown(KeyboardKey.D))
+            {
+                NewDirs.Add(90);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.C))
+            {
+                NewDirs.Add(135);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.S) ||
+                Raylib.IsKeyDown(KeyboardKey.X))
+            {
+                NewDirs.Add(180);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.Z))
+            {
+                NewDirs.Add(225);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.A))
+            {
+                NewDirs.Add(270);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.Q))
+            {
+                NewDirs.Add(315);
+            }
+            (r.Direction, r.Speed) = CalcNewDirection(NewDirs);
+        }
+
+        private static void GetInputRobot1()
+        {
+            Robot r = Robots[1];
+            r.Speed = 0;
+            List<int> NewDirs = [];
+            if (Raylib.IsKeyDown(KeyboardKey.Up))
+            {
+                NewDirs.Add(0);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.Right))
+            {
+                NewDirs.Add(90);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.Down))
+            {
+                NewDirs.Add(180);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.Left))
+            {
+                NewDirs.Add(270);
+            }
+            (r.Direction, r.Speed) = CalcNewDirection(NewDirs);
+        }
+
+        private static void GetInputRobot2()
+        {
+            Robot r = Robots[2];
+            r.Speed = 0;
+            List<int> NewDirs = [];
+            if (Raylib.IsKeyDown(KeyboardKey.Kp8))
+            {
+                NewDirs.Add(0);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.Kp9))
+            {
+                NewDirs.Add(45);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.Kp6))
+            {
+                NewDirs.Add(90);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.Kp3))
+            {
+                NewDirs.Add(135);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.Kp2))
+            {
+                NewDirs.Add(180);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.Kp1))
+            {
+                NewDirs.Add(225);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.Kp4))
+            {
+                NewDirs.Add(270);
+            }
+            if (Raylib.IsKeyDown(KeyboardKey.Kp7))
+            {
+                NewDirs.Add(315);
+            }
+            (r.Direction, r.Speed) = CalcNewDirection(NewDirs);
+        }
+
+        private static (int direction, int speed) CalcNewDirection(List<int> NewDirs)
+        {
+            int direction = 0;
+            int speed = 0;
             // save new direction
             if (NewDirs.Count == 1)
             {
-                r.Direction = NewDirs[0];
-                r.Speed = 5;
+                direction = NewDirs[0];
+                speed = 5;
             }
-            else if (NewDirs.Count == 2)
+            if (NewDirs.Count == 2)
             {
                 if (NewDirs[0] > NewDirs[1])
                 {
@@ -199,21 +255,24 @@ namespace RobotSimulator
                     case 0:
                         if (NewDirs[1] == 90)
                         {
-                            r.Direction = 45;
+                            direction= 45;
+                            speed = 5;
                         }
                         else if (NewDirs[1] == 270)
                         {
-                            r.Direction = 315;
+                            direction = 315;
+                            speed = 5;
                         }
                         break;
                     case 90:
                     case 180:
                     case 270:
-                        r.Direction = (NewDirs[1] + NewDirs[0]) / 2;
+                        direction = (NewDirs[1] + NewDirs[0]) / 2;
+                        speed = 5;
                         break;
                 }
-                r.Speed = 5;
             }
+            return (direction, speed);
         }
     }
 }
