@@ -2,7 +2,7 @@
 
 namespace RobotSimulator
 {
-    internal class Robot(int id, int x, int y, int width, int height, int direction, int speed, Raylib_cs.Color color)
+    internal class Robot(int id, int x, int y, int width, int height, Raylib_cs.Color color)
     {
         public int ID { get; set; } = id;
 
@@ -12,12 +12,13 @@ namespace RobotSimulator
         public int Width { get; set; } = width;
         public int Height { get; set; } = height;
 
-        public int Direction { get; set; } = direction;
-        public int Speed { get; set; } = speed;
-
         public Color Color { get; set; } = color;
 
-        public Rectangle BoundingRectangle
+        public float MovingX { get; set; } = 0;
+        public float MovingY { get; set; } = 0;
+        public float Speed { get; set; } = 0;
+
+        public Rectangle BoundingBox
         {
             get
             {
