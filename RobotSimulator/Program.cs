@@ -6,8 +6,8 @@ namespace RobotSimulator
     {
         private const int WIDTH = 1280;
         private const int HEIGHT = 800;
-        private const int ROBOT_WIDTH = 30;
-        private const int ROBOT_HEIGHT = 30;
+        private const int ROBOT_WIDTH = 64;
+        private const int ROBOT_HEIGHT = 64;
         private const float DEADZONE = 0.1f;
         private const float SPEED = 5;
 
@@ -34,7 +34,7 @@ namespace RobotSimulator
             Robots.Add(new Robot(5, WIDTH - 100 - ROBOT_WIDTH, (HEIGHT - ROBOT_HEIGHT) / 2, ROBOT_WIDTH, ROBOT_HEIGHT, Color.Red));
             Robots.Add(new Robot(6, WIDTH - 100 - ROBOT_WIDTH, HEIGHT - 100 - ROBOT_HEIGHT, ROBOT_WIDTH, ROBOT_HEIGHT, Color.Red));
 
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < 12; i++)
             {
                 Console.WriteLine($"Gamepad {i}: {Raylib.GetGamepadName_(i)}");
             }
@@ -74,6 +74,10 @@ namespace RobotSimulator
                 foreach (Robot r in Robots)
                 {
                     Raylib.DrawRectangle(r.X, r.Y, r.Width, r.Height, r.Color);
+                    var vector = Raylib.MeasureTextEx(Raylib.GetFontDefault(), r.ID.ToString(), 48, 0);
+                    var xOfs = (int)((ROBOT_WIDTH - vector.X) / 2);
+                    var yOfs = (int)((ROBOT_HEIGHT - vector.Y) / 2);
+                    Raylib.DrawText(r.ID.ToString(), r.X + xOfs, r.Y + yOfs, 48, Color.White);
                 }
 
                 Raylib.EndDrawing();
@@ -94,22 +98,32 @@ namespace RobotSimulator
             // check collisions
             foreach (Rectangle wall in Walls)
             {
-                if (Raylib.CheckCollisionRecs(new Rectangle(newX, newY, r.Width, r.Height), wall))
+                if (Raylib.CheckCollisionRecs(new Rectangle(newX, r.Y, r.Width, r.Height), wall))
                 {
-                    return;
+                    newX = r.X;
+                }
+                if (Raylib.CheckCollisionRecs(new Rectangle(r.X, newY, r.Width, r.Height), wall))
+                {
+                    newY = r.Y;
                 }
             }
+            if (newX == r.X && newY == r.Y) return;
             foreach (Robot robot in Robots)
             {
                 if (robot.ID == r.ID)
                 {
                     continue;
                 }
-                if (Raylib.CheckCollisionRecs(new Rectangle(newX, newY, r.Width, r.Height), robot.BoundingBox))
+                if (Raylib.CheckCollisionRecs(new Rectangle(newX, r.Y, r.Width, r.Height), robot.BoundingBox))
                 {
-                    return;
+                    newX = r.X;
+                }
+                if (Raylib.CheckCollisionRecs(new Rectangle(r.X, newY, r.Width, r.Height), robot.BoundingBox))
+                {
+                    newY = r.Y;
                 }
             }
+            if (newX == r.X && newY == r.Y) return;
             // actually move the robot
             r.X = newX;
             r.Y = newY;
@@ -239,15 +253,25 @@ namespace RobotSimulator
 
         private static void GetInputGamepad(int gamepad, Robot r)
         {
-            if (!Raylib.IsGamepadAvailable(gamepad))
-            {
-                return;
-            }
+            //if (!Raylib.IsGamepadAvailable(gamepad))
+            //{
+            //    return;
+            //}
             r.Speed = 0;
             r.MovingX = 0;
             r.MovingY = 0;
             var leftX = Raylib.GetGamepadAxisMovement(gamepad, GamepadAxis.LeftX);
             var leftY = Raylib.GetGamepadAxisMovement(gamepad, GamepadAxis.LeftY);
+            if (Math.Abs(leftX) <= DEADZONE)
+            {
+                leftX += Raylib.IsGamepadButtonDown(gamepad, GamepadButton.LeftFaceLeft) ? -1 : 0;
+                leftX += Raylib.IsGamepadButtonDown(gamepad, GamepadButton.LeftFaceRight) ? 1 : 0;
+            }
+            if (Math.Abs(leftY) <= DEADZONE)
+            {
+                leftY += Raylib.IsGamepadButtonDown(gamepad, GamepadButton.LeftFaceDown) ? 1 : 0;
+                leftY += Raylib.IsGamepadButtonDown(gamepad, GamepadButton.LeftFaceUp) ? -1 : 0;
+            }
             if (Math.Abs(leftX) > DEADZONE)
             {
                 r.MovingX = Math.Sign(leftX);
