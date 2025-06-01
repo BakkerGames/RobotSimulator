@@ -2,7 +2,7 @@
 
 namespace RobotSimulator
 {
-    internal class Robot(int id, int x, int y, int width, int height, Raylib_cs.Color color)
+    public class Robot(int id, int x, int y, int width, int height, Raylib_cs.Color color)
     {
         public int ID { get; set; } = id;
 
