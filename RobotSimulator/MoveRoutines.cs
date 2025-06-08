@@ -25,6 +25,15 @@ public static class MoveRoutines
                 newY = r.Y; // reset
             }
         }
+        foreach (Region region in gamedata.Regions)
+        {
+            if (r.Alliance == region.Alliance) continue;
+            if (Raylib.CheckCollisionRecs(new Rectangle(newX, newY, r.Width, r.Height), region.BoundingBox))
+            {
+                newX = r.X;
+                newY = r.Y;
+            }
+        }
         if (newX == r.X && newY == r.Y) return;
         foreach (Robot robot in gamedata.Robots)
         {

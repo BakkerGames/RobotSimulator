@@ -25,12 +25,20 @@ namespace RobotSimulator
             gamedata.Walls.Add(new Rectangle(WIDTH - 10, 0, WIDTH, HEIGHT));
 
             // add all robots
-            gamedata.Robots.Add(new Robot(1, 100, 100, ROBOT_WIDTH, ROBOT_HEIGHT, Color.Blue));
-            gamedata.Robots.Add(new Robot(2, 100, (HEIGHT - ROBOT_HEIGHT) / 2, ROBOT_WIDTH, ROBOT_HEIGHT, Color.Blue));
-            gamedata.Robots.Add(new Robot(3, 100, HEIGHT - 100 - ROBOT_HEIGHT, ROBOT_WIDTH, ROBOT_HEIGHT, Color.Blue));
-            gamedata.Robots.Add(new Robot(4, WIDTH - 100 - ROBOT_WIDTH, 100, ROBOT_WIDTH, ROBOT_HEIGHT, Color.Red));
-            gamedata.Robots.Add(new Robot(5, WIDTH - 100 - ROBOT_WIDTH, (HEIGHT - ROBOT_HEIGHT) / 2, ROBOT_WIDTH, ROBOT_HEIGHT, Color.Red));
-            gamedata.Robots.Add(new Robot(6, WIDTH - 100 - ROBOT_WIDTH, HEIGHT - 100 - ROBOT_HEIGHT, ROBOT_WIDTH, ROBOT_HEIGHT, Color.Red));
+            gamedata.Robots.Add(new Robot(1, 200, 200, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_BLUE));
+            gamedata.Robots.Add(new Robot(2, 200, (HEIGHT - ROBOT_HEIGHT) / 2, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_BLUE));
+            gamedata.Robots.Add(new Robot(3, 200, HEIGHT - 200 - ROBOT_HEIGHT, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_BLUE));
+            gamedata.Robots.Add(new Robot(4, WIDTH - 200 - ROBOT_WIDTH, 200, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_RED));
+            gamedata.Robots.Add(new Robot(5, WIDTH - 200 - ROBOT_WIDTH, (HEIGHT - ROBOT_HEIGHT) / 2, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_RED));
+            gamedata.Robots.Add(new Robot(6, WIDTH - 200 - ROBOT_WIDTH, HEIGHT - 200 - ROBOT_HEIGHT, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_RED));
+
+            gamedata.Regions.Add(new Region(101, WALL_THICKNESS, WALL_THICKNESS, PICKUP_WIDTH, PICKUP_HEIGHT, ALLIANCE_RED));
+            gamedata.Regions.Add(new Region(102, WALL_THICKNESS, HEIGHT - WALL_THICKNESS - PICKUP_HEIGHT, PICKUP_WIDTH, PICKUP_HEIGHT, ALLIANCE_RED));
+            gamedata.Regions.Add(new Region(103, WIDTH - WALL_THICKNESS - PICKUP_WIDTH, WALL_THICKNESS, PICKUP_WIDTH, PICKUP_HEIGHT, ALLIANCE_BLUE));
+            gamedata.Regions.Add(new Region(104, WIDTH - WALL_THICKNESS - PICKUP_WIDTH, HEIGHT - WALL_THICKNESS - PICKUP_HEIGHT, PICKUP_WIDTH, PICKUP_HEIGHT, ALLIANCE_BLUE));
+            gamedata.Regions.Add(new Region(105, WALL_THICKNESS, (HEIGHT - SCORE_HEIGHT) / 2, SCORE_WIDTH, SCORE_HEIGHT, ALLIANCE_BLUE));
+            gamedata.Regions.Add(new Region(105, WIDTH - WALL_THICKNESS - SCORE_WIDTH, (HEIGHT - SCORE_HEIGHT) / 2, SCORE_WIDTH, SCORE_HEIGHT, ALLIANCE_RED));
+
 
             for (int i = 0; i < 12; i++)
             {
@@ -69,9 +77,31 @@ namespace RobotSimulator
                     Raylib.DrawRectangle((int)wall.X, (int)wall.Y, (int)wall.Width, (int)wall.Height, Color.Yellow);
                 }
 
+                foreach (Region r in gamedata.Regions)
+                {
+                    var color = r.Alliance switch
+                    {
+                        ALLIANCE_BLUE => Color.Blue,
+                        ALLIANCE_RED => Color.Red,
+                        _ => Color.White,
+                    };
+
+                    Raylib.DrawRectangle(r.X, r.Y, WALL_THICKNESS, r.Height, color);
+                    Raylib.DrawRectangle(r.X + r.Width - WALL_THICKNESS, r.Y, WALL_THICKNESS, r.Height, color);
+                    Raylib.DrawRectangle(r.X, r.Y, r.Width, WALL_THICKNESS, color);
+                    Raylib.DrawRectangle(r.X, r.Y + r.Height - WALL_THICKNESS, r.Width, WALL_THICKNESS, color);
+                }
+
                 foreach (Robot r in gamedata.Robots)
                 {
-                    Raylib.DrawRectangle(r.X, r.Y, r.Width, r.Height, r.Color);
+                    var color = r.Alliance switch
+                    {
+                        ALLIANCE_BLUE => Color.Blue,
+                        ALLIANCE_RED => Color.Red,
+                        _ => Color.White,
+                    };
+
+                    Raylib.DrawRectangle(r.X, r.Y, r.Width, r.Height, color);
                     var vector = Raylib.MeasureTextEx(Raylib.GetFontDefault(), r.ID.ToString(), 48, 0);
                     var xOfs = (int)((ROBOT_WIDTH - vector.X) / 2);
                     var yOfs = (int)((ROBOT_HEIGHT - vector.Y) / 2);
