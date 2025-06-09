@@ -15,4 +15,5 @@ public static class Constants
     public const int PICKUP_HEIGHT = 150;
     public const int SCORE_WIDTH = 150;
     public const int SCORE_HEIGHT = 300;
+    public const int BALL_RADIUS = 20;
 }

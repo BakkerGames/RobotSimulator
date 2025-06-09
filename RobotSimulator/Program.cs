@@ -39,6 +39,10 @@ namespace RobotSimulator
             gamedata.Regions.Add(new Region(105, WALL_THICKNESS, (HEIGHT - SCORE_HEIGHT) / 2, SCORE_WIDTH, SCORE_HEIGHT, ALLIANCE_BLUE));
             gamedata.Regions.Add(new Region(105, WIDTH - WALL_THICKNESS - SCORE_WIDTH, (HEIGHT - SCORE_HEIGHT) / 2, SCORE_WIDTH, SCORE_HEIGHT, ALLIANCE_RED));
 
+            gamedata.Balls.Add(new Ball(201, (PICKUP_WIDTH / 2) + WALL_THICKNESS, (PICKUP_HEIGHT / 2) + WALL_THICKNESS, BALL_RADIUS, ALLIANCE_RED));
+            gamedata.Balls.Add(new Ball(201, WIDTH - (PICKUP_WIDTH / 2) - WALL_THICKNESS, (PICKUP_HEIGHT / 2) + WALL_THICKNESS, BALL_RADIUS, ALLIANCE_BLUE));
+            gamedata.Balls.Add(new Ball(201, (PICKUP_WIDTH / 2) + WALL_THICKNESS, HEIGHT - (PICKUP_HEIGHT / 2) - WALL_THICKNESS, BALL_RADIUS, ALLIANCE_RED));
+            gamedata.Balls.Add(new Ball(201, WIDTH - (PICKUP_WIDTH / 2) - WALL_THICKNESS, HEIGHT - (PICKUP_HEIGHT / 2) - WALL_THICKNESS, BALL_RADIUS, ALLIANCE_BLUE));
 
             for (int i = 0; i < 12; i++)
             {
@@ -106,6 +110,19 @@ namespace RobotSimulator
                     var xOfs = (int)((ROBOT_WIDTH - vector.X) / 2);
                     var yOfs = (int)((ROBOT_HEIGHT - vector.Y) / 2);
                     Raylib.DrawText(r.ID.ToString(), r.X + xOfs, r.Y + yOfs, 48, Color.White);
+                }
+
+                foreach (Ball b in gamedata.Balls)
+                {
+                    var color = b.Alliance switch
+                    {
+                        ALLIANCE_BLUE => Color.Blue,
+                        ALLIANCE_RED => Color.Red,
+                        _ => Color.White,
+                    };
+
+                    Raylib.DrawCircle(b.X, b.Y, b.Radius, Color.White);
+                    Raylib.DrawCircle(b.X, b.Y, b.Radius - 5, color);
                 }
 
                 Raylib.EndDrawing();

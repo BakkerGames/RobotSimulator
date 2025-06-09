@@ -7,4 +7,5 @@ public class GameData
     public List<Rectangle> Walls = [];
     public List<Robot> Robots = [];
     public List<Region> Regions = [];
+    public List<Ball> Balls = [];
 }
