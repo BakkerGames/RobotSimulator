@@ -56,12 +56,12 @@ internal class DrawRoutines
             Raylib.DrawText(r.ID.ToString(), r.X + xOfs, r.Y + yOfs, 48, textColor);
         }
 
-        var blueText = $"Score {gamedata.BlueScore}";
-        var redText = $"Score {gamedata.RedScore}";
-        var blueLen = Raylib.MeasureText(blueText, 24);
-        var redLen = Raylib.MeasureText(redText, 24);
-        Raylib.DrawText(blueText, WALL_THICKNESS + ((SCORE_WIDTH - blueLen) / 2), 220, 24, Color.Yellow);
-        Raylib.DrawText(redText, WIDTH - WALL_THICKNESS - SCORE_WIDTH + ((SCORE_WIDTH - redLen) / 2), 220, 24, Color.Yellow);
+        var blueText = $"{gamedata.BlueScore}";
+        var redText = $"{gamedata.RedScore}";
+        var blueLen = Raylib.MeasureText(blueText, 64);
+        var redLen = Raylib.MeasureText(redText, 64);
+        Raylib.DrawText(blueText, WALL_THICKNESS + ((SCORE_WIDTH - blueLen) / 2), (HEIGHT / 2) - 30, 64, Color.Yellow);
+        Raylib.DrawText(redText, WIDTH - WALL_THICKNESS - SCORE_WIDTH + ((SCORE_WIDTH - redLen) / 2), (HEIGHT / 2) - 30, 64, Color.Yellow);
 
         Raylib.EndDrawing();
     }
