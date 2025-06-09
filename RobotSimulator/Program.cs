@@ -2,49 +2,22 @@
 using static RobotSimulator.Constants;
 using static RobotSimulator.InputRoutines;
 using static RobotSimulator.MoveRoutines;
+using static RobotSimulator.DrawRoutines;
 
 namespace RobotSimulator
 {
     internal class Program
     {
-
-        //public static List<Rectangle> Walls = [];
-        //public static List<Robot> Robots = [];
-        public static readonly GameData gamedata = new();
-
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
+            GameData gamedata = new();
             Raylib.InitWindow(WIDTH, HEIGHT, "RobotSimulator");
             Raylib.SetTargetFPS(30);
             Raylib.SetExitKey(KeyboardKey.Escape);
 
-            // add all walls
-            gamedata.Walls.Add(new Rectangle(0, 0, WIDTH, 10));
-            gamedata.Walls.Add(new Rectangle(0, HEIGHT - 10, WIDTH, 10));
-            gamedata.Walls.Add(new Rectangle(0, 0, 10, HEIGHT));
-            gamedata.Walls.Add(new Rectangle(WIDTH - 10, 0, WIDTH, HEIGHT));
+            InitGame(gamedata);
 
-            // add all robots
-            gamedata.Robots.Add(new Robot(1, 200, 200, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_BLUE));
-            gamedata.Robots.Add(new Robot(2, 200, (HEIGHT - ROBOT_HEIGHT) / 2, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_BLUE));
-            gamedata.Robots.Add(new Robot(3, 200, HEIGHT - 200 - ROBOT_HEIGHT, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_BLUE));
-            gamedata.Robots.Add(new Robot(4, WIDTH - 200 - ROBOT_WIDTH, 200, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_RED));
-            gamedata.Robots.Add(new Robot(5, WIDTH - 200 - ROBOT_WIDTH, (HEIGHT - ROBOT_HEIGHT) / 2, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_RED));
-            gamedata.Robots.Add(new Robot(6, WIDTH - 200 - ROBOT_WIDTH, HEIGHT - 200 - ROBOT_HEIGHT, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_RED));
-
-            gamedata.Regions.Add(new Region(101, WALL_THICKNESS, WALL_THICKNESS, PICKUP_WIDTH, PICKUP_HEIGHT, ALLIANCE_RED));
-            gamedata.Regions.Add(new Region(102, WALL_THICKNESS, HEIGHT - WALL_THICKNESS - PICKUP_HEIGHT, PICKUP_WIDTH, PICKUP_HEIGHT, ALLIANCE_RED));
-            gamedata.Regions.Add(new Region(103, WIDTH - WALL_THICKNESS - PICKUP_WIDTH, WALL_THICKNESS, PICKUP_WIDTH, PICKUP_HEIGHT, ALLIANCE_BLUE));
-            gamedata.Regions.Add(new Region(104, WIDTH - WALL_THICKNESS - PICKUP_WIDTH, HEIGHT - WALL_THICKNESS - PICKUP_HEIGHT, PICKUP_WIDTH, PICKUP_HEIGHT, ALLIANCE_BLUE));
-            gamedata.Regions.Add(new Region(105, WALL_THICKNESS, (HEIGHT - SCORE_HEIGHT) / 2, SCORE_WIDTH, SCORE_HEIGHT, ALLIANCE_BLUE));
-            gamedata.Regions.Add(new Region(105, WIDTH - WALL_THICKNESS - SCORE_WIDTH, (HEIGHT - SCORE_HEIGHT) / 2, SCORE_WIDTH, SCORE_HEIGHT, ALLIANCE_RED));
-
-            gamedata.Balls.Add(new Ball(201, (PICKUP_WIDTH / 2) + WALL_THICKNESS, (PICKUP_HEIGHT / 2) + WALL_THICKNESS, BALL_RADIUS, ALLIANCE_RED));
-            gamedata.Balls.Add(new Ball(201, WIDTH - (PICKUP_WIDTH / 2) - WALL_THICKNESS, (PICKUP_HEIGHT / 2) + WALL_THICKNESS, BALL_RADIUS, ALLIANCE_BLUE));
-            gamedata.Balls.Add(new Ball(201, (PICKUP_WIDTH / 2) + WALL_THICKNESS, HEIGHT - (PICKUP_HEIGHT / 2) - WALL_THICKNESS, BALL_RADIUS, ALLIANCE_RED));
-            gamedata.Balls.Add(new Ball(201, WIDTH - (PICKUP_WIDTH / 2) - WALL_THICKNESS, HEIGHT - (PICKUP_HEIGHT / 2) - WALL_THICKNESS, BALL_RADIUS, ALLIANCE_BLUE));
-
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 6; i++)
             {
                 Console.WriteLine($"Gamepad {i}: {Raylib.GetGamepadName_(i)}");
             }
@@ -71,64 +44,66 @@ namespace RobotSimulator
                 }
 
                 // Draw section
-
-                Raylib.BeginDrawing();
-
-                Raylib.ClearBackground(Color.Black);
-
-                foreach (Rectangle wall in gamedata.Walls)
-                {
-                    Raylib.DrawRectangle((int)wall.X, (int)wall.Y, (int)wall.Width, (int)wall.Height, Color.Yellow);
-                }
-
-                foreach (Region r in gamedata.Regions)
-                {
-                    var color = r.Alliance switch
-                    {
-                        ALLIANCE_BLUE => Color.Blue,
-                        ALLIANCE_RED => Color.Red,
-                        _ => Color.White,
-                    };
-
-                    Raylib.DrawRectangle(r.X, r.Y, WALL_THICKNESS, r.Height, color);
-                    Raylib.DrawRectangle(r.X + r.Width - WALL_THICKNESS, r.Y, WALL_THICKNESS, r.Height, color);
-                    Raylib.DrawRectangle(r.X, r.Y, r.Width, WALL_THICKNESS, color);
-                    Raylib.DrawRectangle(r.X, r.Y + r.Height - WALL_THICKNESS, r.Width, WALL_THICKNESS, color);
-                }
-
-                foreach (Robot r in gamedata.Robots)
-                {
-                    var color = r.Alliance switch
-                    {
-                        ALLIANCE_BLUE => Color.Blue,
-                        ALLIANCE_RED => Color.Red,
-                        _ => Color.White,
-                    };
-
-                    Raylib.DrawRectangle(r.X, r.Y, r.Width, r.Height, color);
-                    var vector = Raylib.MeasureTextEx(Raylib.GetFontDefault(), r.ID.ToString(), 48, 0);
-                    var xOfs = (int)((ROBOT_WIDTH - vector.X) / 2);
-                    var yOfs = (int)((ROBOT_HEIGHT - vector.Y) / 2);
-                    Raylib.DrawText(r.ID.ToString(), r.X + xOfs, r.Y + yOfs, 48, Color.White);
-                }
-
-                foreach (Ball b in gamedata.Balls)
-                {
-                    var color = b.Alliance switch
-                    {
-                        ALLIANCE_BLUE => Color.Blue,
-                        ALLIANCE_RED => Color.Red,
-                        _ => Color.White,
-                    };
-
-                    Raylib.DrawCircle(b.X, b.Y, b.Radius, Color.White);
-                    Raylib.DrawCircle(b.X, b.Y, b.Radius - 5, color);
-                }
-
-                Raylib.EndDrawing();
+                DrawGame(gamedata);
             }
 
             Raylib.CloseWindow();
+        }
+
+        public static void InitGame(GameData gamedata)
+        {
+            // add all walls
+            gamedata.Walls.Add(new Rectangle(0, 0, WIDTH, 10));
+            gamedata.Walls.Add(new Rectangle(0, HEIGHT - 10, WIDTH, 10));
+            gamedata.Walls.Add(new Rectangle(0, 0, 10, HEIGHT));
+            gamedata.Walls.Add(new Rectangle(WIDTH - 10, 0, WIDTH, HEIGHT));
+
+            // add all robots
+            gamedata.Robots.Add(new Robot(1, 200, 200, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_BLUE));
+            gamedata.Robots.Add(new Robot(2, 200, (HEIGHT - ROBOT_HEIGHT) / 2, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_BLUE));
+            gamedata.Robots.Add(new Robot(3, 200, HEIGHT - 200 - ROBOT_HEIGHT, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_BLUE));
+            gamedata.Robots.Add(new Robot(4, WIDTH - 200 - ROBOT_WIDTH, 200, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_RED));
+            gamedata.Robots.Add(new Robot(5, WIDTH - 200 - ROBOT_WIDTH, (HEIGHT - ROBOT_HEIGHT) / 2, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_RED));
+            gamedata.Robots.Add(new Robot(6, WIDTH - 200 - ROBOT_WIDTH, HEIGHT - 200 - ROBOT_HEIGHT, ROBOT_WIDTH, ROBOT_HEIGHT, ALLIANCE_RED));
+
+            gamedata.Regions.Add(new Region(101, WALL_THICKNESS, WALL_THICKNESS, PICKUP_WIDTH, PICKUP_HEIGHT, ALLIANCE_RED));
+            gamedata.Regions.Add(new Region(102, WALL_THICKNESS, HEIGHT - WALL_THICKNESS - PICKUP_HEIGHT, PICKUP_WIDTH, PICKUP_HEIGHT, ALLIANCE_RED));
+            gamedata.Regions.Add(new Region(103, WIDTH - WALL_THICKNESS - PICKUP_WIDTH, WALL_THICKNESS, PICKUP_WIDTH, PICKUP_HEIGHT, ALLIANCE_BLUE));
+            gamedata.Regions.Add(new Region(104, WIDTH - WALL_THICKNESS - PICKUP_WIDTH, HEIGHT - WALL_THICKNESS - PICKUP_HEIGHT, PICKUP_WIDTH, PICKUP_HEIGHT, ALLIANCE_BLUE));
+
+            var blueScore = new Region(105, WALL_THICKNESS, (HEIGHT - SCORE_HEIGHT) / 2, SCORE_WIDTH, SCORE_HEIGHT, ALLIANCE_BLUE);
+            var redScore = new Region(105, WIDTH - WALL_THICKNESS - SCORE_WIDTH, (HEIGHT - SCORE_HEIGHT) / 2, SCORE_WIDTH, SCORE_HEIGHT, ALLIANCE_RED);
+            gamedata.Regions.Add(blueScore);
+            gamedata.Regions.Add(redScore);
+            gamedata.BlueScoreZone = blueScore;
+            gamedata.RedScoreZone = redScore;
+
+            AddBall(gamedata, 0);
+            AddBall(gamedata, 1);
+            AddBall(gamedata, 2);
+            AddBall(gamedata, 3);
+        }
+
+        public static void AddBall(GameData gamedata, int ballLocation)
+        {
+            switch (ballLocation)
+            {
+                case 0:
+                    gamedata.Balls.Add(new Ball(gamedata.LastBallID++, (PICKUP_WIDTH / 2) + WALL_THICKNESS, (PICKUP_HEIGHT / 2) + WALL_THICKNESS, BALL_RADIUS, ALLIANCE_RED));
+                    break;
+
+                case 1:
+                    gamedata.Balls.Add(new Ball(gamedata.LastBallID++, WIDTH - (PICKUP_WIDTH / 2) - WALL_THICKNESS, (PICKUP_HEIGHT / 2) + WALL_THICKNESS, BALL_RADIUS, ALLIANCE_BLUE));
+                    break;
+
+                case 2:
+                    gamedata.Balls.Add(new Ball(gamedata.LastBallID++, (PICKUP_WIDTH / 2) + WALL_THICKNESS, HEIGHT - (PICKUP_HEIGHT / 2) - WALL_THICKNESS, BALL_RADIUS, ALLIANCE_RED));
+                    break;
+
+                case 3:
+                    gamedata.Balls.Add(new Ball(gamedata.LastBallID++, WIDTH - (PICKUP_WIDTH / 2) - WALL_THICKNESS, HEIGHT - (PICKUP_HEIGHT / 2) - WALL_THICKNESS, BALL_RADIUS, ALLIANCE_BLUE));
+                    break;
+            }
         }
     }
 }

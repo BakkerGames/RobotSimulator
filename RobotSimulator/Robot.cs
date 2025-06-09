@@ -15,6 +15,8 @@ namespace RobotSimulator
         public float MovingY { get; set; } = 0;
         public float Speed { get; set; } = 0;
 
+        public Ball? CarryingBall { get; set; }
+
         public Rectangle BoundingBox
         {
             get

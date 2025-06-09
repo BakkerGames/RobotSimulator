@@ -2,14 +2,28 @@
 
 namespace RobotSimulator;
 
-public class Region(int id, int x, int y, int width, int height, int alliance)
+public class Region
 {
-    public int Id { get; } = id;
-    public int X { get; set; } = x;
-    public int Y { get; set; } = y;
-    public int Width { get; set; } = width;
-    public int Height { get; set; } = height;
-    public int Alliance { get; set; } = alliance;
+    public Region()
+    {
+    }
+
+    public Region(int id, int x, int y, int width, int height, int alliance)
+    {
+        ID = id;
+        X = x;
+        Y = y;
+        Width = width;
+        Height = height;
+        Alliance = alliance;
+    }
+
+    public int ID { get; }
+    public int X { get; set; }
+    public int Y { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public int Alliance { get; set; }
 
     public Rectangle BoundingBox
     {

@@ -1,4 +1,5 @@
 ﻿using Raylib_cs;
+using static RobotSimulator.Constants;
 
 namespace RobotSimulator;
 
@@ -13,6 +14,7 @@ public static class MoveRoutines
             newX += (int)(r.MovingX * r.Speed);
             newY += (int)(r.MovingY * r.Speed);
         }
+
         // check collisions
         foreach (Rectangle wall in gamedata.Walls)
         {
@@ -25,9 +27,14 @@ public static class MoveRoutines
                 newY = r.Y; // reset
             }
         }
+        if (newX == r.X && newY == r.Y) return;
         foreach (Region region in gamedata.Regions)
         {
-            if (r.Alliance == region.Alliance) continue;
+            if (r.Alliance == region.Alliance)
+            {
+                // ignore if in alliance region
+                continue;
+            }
             if (Raylib.CheckCollisionRecs(new Rectangle(newX, newY, r.Width, r.Height), region.BoundingBox))
             {
                 newX = r.X;
@@ -54,5 +61,49 @@ public static class MoveRoutines
         // actually move the robot
         r.X = newX;
         r.Y = newY;
+        // check for ball pickup
+        if (r.CarryingBall == null)
+        {
+            foreach (Ball b in gamedata.Balls)
+            {
+                if (Raylib.CheckCollisionCircleRec(b.Center(), b.Radius / 4, r.BoundingBox))
+                {
+                    gamedata.Balls.Remove(b);
+                    r.CarryingBall = b;
+                    gamedata.Balls.Add(new Ball(gamedata.LastBallID++, b.X, b.Y, b.Radius, b.Alliance));
+                    break;
+                }
+            }
+        }
+        // check for ball scoring
+        if (r.CarryingBall != null)
+        {
+            r.CarryingBall.X = r.X + (r.Width / 2);
+            r.CarryingBall.Y = r.Y + (r.Height / 2);
+            if (r.Alliance == ALLIANCE_BLUE)
+            {
+                if (RectangleContains(gamedata.BlueScoreZone.BoundingBox, r.BoundingBox))
+                {
+                    r.CarryingBall = null;
+                    gamedata.BlueScore++;
+                }
+            }
+            else if (r.Alliance == ALLIANCE_RED)
+            {
+                if (RectangleContains(gamedata.RedScoreZone.BoundingBox, r.BoundingBox))
+                {
+                    r.CarryingBall = null;
+                    gamedata.RedScore++;
+                }
+            }
+        }
+    }
+
+    private static bool RectangleContains(Rectangle outer, Rectangle inner)
+    {
+        return outer.X < inner.X &&
+            outer.X + outer.Width > inner.X + inner.Width &&
+            outer.Y < inner.Y &&
+            outer.Y + outer.Height > inner.Y + inner.Height;
     }
 }
