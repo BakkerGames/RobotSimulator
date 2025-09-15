@@ -31,16 +31,17 @@ internal class DrawRoutines
             Raylib.DrawRectangle(r.X, r.Y + r.Height - WALL_THICKNESS, r.Width, WALL_THICKNESS, color);
         }
 
+        foreach (Ball b in gamedata.Balls)
+        {
+            if (b.IsHidden)
+            {
+                continue;
+            }
+            Raylib.DrawCircle(b.X, b.Y, b.Radius, Color.White);
+        }
+
         if (gamedata.TimeRemaining > 0)
         {
-            foreach (Ball b in gamedata.Balls)
-            {
-                if (b.IsHidden)
-                {
-                    continue;
-                }
-                Raylib.DrawCircle(b.X, b.Y, b.Radius, Color.White);
-            }
 
             foreach (Robot r in gamedata.Robots)
             {
@@ -67,8 +68,8 @@ internal class DrawRoutines
         var redText = $"{gamedata.RedScore}";
         var blueLen = Raylib.MeasureText(blueText, 64);
         var redLen = Raylib.MeasureText(redText, 64);
-        Raylib.DrawText(blueText, WALL_THICKNESS + ((SCORE_WIDTH - blueLen) / 2), (HEIGHT / 2) - 30, 64, Color.Green);
-        Raylib.DrawText(redText, WIDTH - WALL_THICKNESS - SCORE_WIDTH + ((SCORE_WIDTH - redLen) / 2), (HEIGHT / 2) - 30, 64, Color.Green);
+        Raylib.DrawText(blueText, WALL_THICKNESS + ((SCORE_WIDTH - blueLen) / 2), (HEIGHT / 2) - 30, 64, Color.Blue);
+        Raylib.DrawText(redText, WIDTH - WALL_THICKNESS - SCORE_WIDTH + ((SCORE_WIDTH - redLen) / 2), (HEIGHT / 2) - 30, 64, Color.Red);
 
         var timeText = $"Time Remaining: {gamedata.TimeRemaining}";
         var len = Raylib.MeasureText(timeText, 48);

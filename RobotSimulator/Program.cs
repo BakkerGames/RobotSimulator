@@ -38,9 +38,13 @@ internal class Program
                 // Get different kinds of input for different robots
                 GetInputGamepad(0, gamedata.Robots[0]);
                 GetInputGamepad(1, gamedata.Robots[1]);
-                GetInputWASD(gamedata.Robots[2]);
                 GetInputGamepad(2, gamedata.Robots[3]);
-                GetInputGamepad(2, gamedata.Robots[4]);
+                GetInputGamepad(3, gamedata.Robots[4]);
+
+                // either 5th and 6th gamepads or keyboard WASD and arrows
+                GetInputGamepad(4, gamedata.Robots[2]);
+                GetInputGamepad(5, gamedata.Robots[5]);
+                GetInputWASD(gamedata.Robots[2]);
                 GetInputArrows(gamedata.Robots[5]);
 
                 // Move all robots
