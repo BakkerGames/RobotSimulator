@@ -15,7 +15,9 @@ internal class Program
         Raylib.InitWindow(WIDTH, HEIGHT, "RobotSimulator");
         Raylib.SetTargetFPS(30);
         Raylib.SetExitKey(KeyboardKey.Escape);
+#if !DEBUG
         Raylib.SetWindowState(ConfigFlags.FullscreenMode);
+#endif
 
         for (int i = 0; i < 6; i++)
         {
