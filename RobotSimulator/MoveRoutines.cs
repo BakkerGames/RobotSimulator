@@ -66,11 +66,17 @@ public static class MoveRoutines
         {
             foreach (Ball b in gamedata.Balls)
             {
+                if (b.IsHidden || b.IsScored) continue;
                 if (Raylib.CheckCollisionCircleRec(b.Center(), b.Radius / 4, r.BoundingBox))
                 {
                     gamedata.Balls.Remove(b);
                     r.CarryingBall = b;
-                    gamedata.Balls.Add(new Ball(gamedata.LastBallID++, b.X, b.Y, b.Radius, b.Alliance));
+                    var bNew = new Ball(gamedata.LastBallID++, b.X, b.Y, BALL_RADIUS, b.Alliance)
+                    {
+                        TimeHidden = DateTimeOffset.Now,
+                        IsHidden = true
+                    };
+                    gamedata.Balls.Add(bNew);
                     break;
                 }
             }
@@ -84,7 +90,18 @@ public static class MoveRoutines
             {
                 if (RectangleContains(gamedata.BlueScoreZone.BoundingBox, r.BoundingBox))
                 {
+                    var b = r.CarryingBall;
                     r.CarryingBall = null;
+                    b.X = gamedata.BlueScoreZone.X +
+                        (WALL_THICKNESS * 2) + BALL_OFFSET +
+                        ((gamedata.BlueScore % BALLS_PER_ROW) * (BALL_RADIUS_SCORED * 2 + BALL_OFFSET));
+                    b.Y = gamedata.BlueScoreZone.Y +
+                        (WALL_THICKNESS * 2) + BALL_OFFSET +
+                        ((gamedata.BlueScore / BALLS_PER_ROW) * (BALL_RADIUS_SCORED * 2 + BALL_OFFSET));
+                    b.Radius = BALL_RADIUS_SCORED;
+                    b.IsScored = true;
+                    b.IsHidden = false;
+                    gamedata.Balls.Add(b);
                     gamedata.BlueScore++;
                 }
             }
@@ -92,7 +109,18 @@ public static class MoveRoutines
             {
                 if (RectangleContains(gamedata.RedScoreZone.BoundingBox, r.BoundingBox))
                 {
+                    var b = r.CarryingBall;
                     r.CarryingBall = null;
+                    b.X = gamedata.RedScoreZone.X +
+                        (WALL_THICKNESS * 2) + BALL_OFFSET +
+                        ((gamedata.RedScore % BALLS_PER_ROW) * (BALL_RADIUS_SCORED * 2 + BALL_OFFSET));
+                    b.Y = gamedata.RedScoreZone.Y +
+                        (WALL_THICKNESS * 2) + BALL_OFFSET +
+                        ((gamedata.RedScore / BALLS_PER_ROW) * (BALL_RADIUS_SCORED * 2 + BALL_OFFSET));
+                    b.Radius = BALL_RADIUS_SCORED;
+                    b.IsScored = true;
+                    b.IsHidden = false;
+                    gamedata.Balls.Add(b);
                     gamedata.RedScore++;
                 }
             }

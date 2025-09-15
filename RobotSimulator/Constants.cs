@@ -16,4 +16,8 @@ public static class Constants
     public const int SCORE_WIDTH = 150;
     public const int SCORE_HEIGHT = 300;
     public const int BALL_RADIUS = 26;
+    public const int BALL_RADIUS_SCORED = 10;
+    public const int BALL_OFFSET = 10;
+    public const int BALLS_PER_ROW = 4;
+    public const int MATCH_TIME_SECONDS = 120;
 }
