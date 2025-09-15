@@ -77,8 +77,8 @@ internal class DrawRoutines
 
         if (gamedata.TimeRemaining <= 0)
         {
-            var overText = "";
-            var overColor = Color.Green;
+            string overText;
+            Color overColor;
             if (gamedata.BlueScore > gamedata.RedScore)
             {
                 overText = "Blue Alliance Wins!";
@@ -92,14 +92,14 @@ internal class DrawRoutines
             else
             {
                 overText = "It's a tie!";
-                overColor = Color.Green;
+                overColor = Color.White;
             }
             var overLen = Raylib.MeasureText(overText, 72);
             Raylib.DrawText(overText, (WIDTH - overLen) / 2, (HEIGHT / 2) - 100, 72, overColor);
 
             var startText = "Press SPACE to start a new match";
             var startLen = Raylib.MeasureText(startText, 48);
-            Raylib.DrawText(startText, (WIDTH - startLen) / 2, (HEIGHT / 2) + 50, 48, Color.Yellow);
+            Raylib.DrawText(startText, (WIDTH - startLen) / 2, (HEIGHT / 2) + 50, 48, Color.White);
         }
 
         Raylib.EndDrawing();

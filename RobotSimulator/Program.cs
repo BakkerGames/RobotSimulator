@@ -9,7 +9,7 @@ namespace RobotSimulator;
 
 internal class Program
 {
-    public static void Main(string[] args)
+    public static void Main(string[] _)
     {
         GameData gamedata = new();
         Raylib.InitWindow(WIDTH, HEIGHT, "RobotSimulator");
